@@ -1,8 +1,23 @@
 # Vunbox-Backend
 
-Backend code and infrastructure providing the services powering [Vunbox.com](http://vunbox.com)
+A monorepo containing the backend infrastructure services powering: [Vunbox.com](http://vunbox.com)
 
-## Setup
+## Service Definitions
+
+> Each "app" in the apps directory is a stand alone microservice. Each "app" is designed to serve a specific pourpose. We have listed them below.
+
+- `feed` - Arguably the most important app, listens for live socket events from the [Wax.IO](https://wax.io) API.
+- `wet` - Grabs case information from the wax api and caches it locally in the db.
+- `stats` - While generally named, Listens for changes in events and calculates _user_ stats in realtime.
+- `casestats` - Listens for changes in case events and calculates _case_ stats in realtime.
+- `casesites` - Listens for changes in case events and calculates _casesite_ stats in realtime.
+- `api` - Fetches data from various tables in the database, exposing a simple api.
+- `snapshots` - Listens for chanes in events and forms "snapshots" of stats each day.
+- `leaderboards` - Forms leaderboards for various properties. _WIP_
+
+## Installation & Setup
+
+### Required Dependencies
 
 > This project is built and maintained using Node.js, RethinkDB & Yarn.
 
@@ -26,8 +41,6 @@ Backend code and infrastructure providing the services powering [Vunbox.com](htt
 - `gcloud.bucket` - gcloud bucket name
 
 ```env
-  # Example ENV
-
   name=api
   port=9001
 
@@ -37,9 +50,17 @@ Backend code and infrastructure providing the services powering [Vunbox.com](htt
   rethink.user=
   rethink.password=
 
+  # needed only for snapshots app
   gcloud.projectId=
   gcloud.keyFilename="./secrets/gcloud.json"
   gcloud.bucket=
+```
+
+### Install Docker
+
+```sh
+  curl -fsSL https://get.docker.com -o get-docker.sh
+  sudo sh get-docker.sh
 ```
 
 ### Start Rethinkdb Instance
@@ -49,7 +70,7 @@ Backend code and infrastructure providing the services powering [Vunbox.com](htt
   docker run -d -P --name rethink1 rethinkdb
 ```
 
-## Start APP(s)
+### Start Service(s) "apps"
 
 > Below are some simple instructions on how to run an app.
 
