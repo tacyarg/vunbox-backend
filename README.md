@@ -4,7 +4,7 @@ A monorepo containing the backend infrastructure services powering: [Vunbox.com]
 
 ## Service Definitions
 
-> Each "app" in the apps directory is a stand alone microservice. Each "app" is designed to serve a specific pourpose. We have listed them below.
+> Each "app" is designed to serve a specific pourpose, we have listed them below.
 
 - `feed` - Arguably the most important app, listens for live socket events from the [Wax.IO](https://wax.io) API.
 - `wet` - Grabs case information from the wax api and caches it locally in the db.
