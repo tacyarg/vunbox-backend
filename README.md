@@ -26,20 +26,20 @@ Backend code and infrastructure providing the services powering [Vunbox.com](htt
 - `gcloud.bucket` - gcloud bucket name
 
 ```env
-# Example ENV
+  # Example ENV
 
-name=api
-port=9001
+  name=api
+  port=9001
 
-rethink.db=test
-rethink.host=localhost
-rethink.port=
-rethink.user=
-rethink.password=
+  rethink.db=test
+  rethink.host=localhost
+  rethink.port=
+  rethink.user=
+  rethink.password=
 
-gcloud.projectId=
-gcloud.keyFilename="./secrets/gcloud.json"
-gcloud.bucket=
+  gcloud.projectId=
+  gcloud.keyFilename="./secrets/gcloud.json"
+  gcloud.bucket=
 ```
 
 ### Start Rethinkdb Instance
