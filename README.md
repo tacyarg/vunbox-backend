@@ -12,7 +12,7 @@ A monorepo containing the backend infrastructure services powering: [Vunbox.com]
 - `casestats` - Listens for changes in case events and calculates _case_ stats in realtime.
 - `casesites` - Listens for changes in case events and calculates _casesite_ stats in realtime.
 - `api` - Fetches data from various tables in the database, exposing a simple api.
-- `snapshots` - Listens for chanes in events and forms "snapshots" of stats each day.
+- `snapshots` - Listens for changes in events and forms "snapshots" of stats each day.
 - `leaderboards` - Forms leaderboards for various properties. _WIP_
 
 ## Installation & Setup
