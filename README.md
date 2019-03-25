@@ -42,7 +42,14 @@ gcloud.keyFilename="./secrets/gcloud.json"
 gcloud.bucket=
 ```
 
-## Startup
+### Start Rethinkdb Instance
+
+```bash
+  docker pull rethinkdb
+  docker run -d -P --name rethink1 rethinkdb
+```
+
+## Start APP(s)
 
 > Below are some simple instructions on how to run an app.
 
