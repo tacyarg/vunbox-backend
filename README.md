@@ -1,12 +1,13 @@
 # Vunbox-Backend
 
 A monorepo containing the backend infrastructure services powering: [Vunbox.com](http://vunbox.com)
+A site providing transparency and auditability for the [Wax](https://wax.io) Blockchain.
 
 ## Service Definitions
 
 > Each "app" is designed to serve a specific pourpose, we have listed them below.
 
-- `feed` - Arguably the most important app, listens for live socket events from the [Wax.IO](https://wax.io) API.
+- `feed` - Arguably the most important app, listens for live socket events from the [Wax](https://wax.io) API.
 - `wet` - Grabs case information from the wax api and caches it locally in the db.
 - `stats` - While generally named, Listens for changes in events and calculates _user_ stats in realtime.
 - `casestats` - Listens for changes in case events and calculates _case_ stats in realtime.
