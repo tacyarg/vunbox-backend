@@ -1,7 +1,7 @@
 # Vunbox-Backend
 
 A monorepo containing the backend infrastructure services powering: [Vunbox.com](http://vunbox.com)
-A site providing transparency and auditability for the [Wax](https://wax.io) Blockchain.
+> A site providing transparency and auditability for the [Wax](https://wax.io) Blockchain.
 
 ## Service Definitions
 
