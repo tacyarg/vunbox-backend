@@ -72,5 +72,14 @@ module.exports = function(config = {}) {
         }
       })
     },
+    async GetItemOwnerHistory(item_id) {
+      const { response } = await callCaseAPI('get', 'IWax/GetItemHistory/v1', {
+        item_id,
+        page: 1,
+        limit: 10,
+      })
+
+      return response
+    },
   }
 }
