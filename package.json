@@ -8,7 +8,7 @@
     "axios": "^0.18.0",
     "dotenv": "^6.2.0",
     "highland": "^2.13.1",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.13",
     "memtable": "^2.0.0-alpha.12",
     "moment": "^2.24.0",
     "rethink-table": "^0.0.5",
