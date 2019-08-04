@@ -26,6 +26,7 @@
     "leaderboards": "name=leaderboards yarn start",
     "wet": "name=wet yarn start",
     "snapshots": "name=snapshots yarn start",
-    "casesites": "name=casesites yarn start"
+    "casesites": "name=casesites yarn start",
+    "dump": "name=dump yarn start"
   }
 }

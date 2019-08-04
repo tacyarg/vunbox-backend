@@ -3,7 +3,7 @@ const moment = require('moment')
 
 exports.ONE_MINUTE_MS = 60 * 1000
 exports.ONE_HOUR_MS = 60 * exports.ONE_MINUTE_MS
-exports.ONE_DAY_MAS = 24 * exports.ONE_HOUR_MS
+exports.ONE_DAY_MS = 24 * exports.ONE_HOUR_MS
 
 exports.loop = async (fn, delay = 1000, max, count = 0, result) => {
   if (max && count >= max) return result
