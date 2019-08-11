@@ -26,6 +26,7 @@ module.exports = config => {
       await events
         .readStream()
         .filter(row => {
+          console.log(row.id)
           return row.item.price
         })
         .map(dynamodb.insert)
