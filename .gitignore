@@ -24,3 +24,5 @@ yarn-error.log*
 *.sw*
 
 gcloud.json 
+
+db_dump_*

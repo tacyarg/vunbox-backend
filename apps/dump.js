@@ -7,40 +7,47 @@ const highland = require('highland')
 const { loop, ONE_HOUR_MS, ONE_DAY_MS } = require('../libs/utils')
 
 module.exports = config => {
+  const dynamodb = require('../libs/dynamodb')(config.dynamodb)('vunbox.events')
+
   return Database(config.rethink).then(
     async ({ events, stats, users, items, cases, snapshots, backups }) => {
 
-      async function dump() {
+      // buffer changes
+      const realtimeBuffer = highland()
 
-        const startTime = Date.now()
+      // force all events into the buffer
+      events
+        .changes()
+        .map(row => row.new_val)
+        .compact()
+        .pipe(realtimeBuffer)
 
-        const bucketStream = Bucket(config.gcloud).writeStream(
-          `db_dump_events_${startTime}`
-        )
+      // resume memory state.
+      await events
+        .readStream()
+        .filter(row => {
+          return row.item.price
+        })
+        .map(dynamodb.insert)
+        .flatMap(highland)
+        .errors(err => {
+          console.error(err)
+          process.exit(1)
+        })
+        .last()
+        .toPromise(Promise)
 
-        await events
-          .streamSorted()
-          .filter(row => {
-            return row.item.price
-          })
-          .map(event => {
-            return bucketStream.write(JSON.stringify(event))
-          })
-          .errors(err => {
-            console.error(err)
-            process.exit(1)
-          })
-          .last()
-          .toPromise(Promise)
-
-        bucketStream.end()
-
-        const duration = Date.now()-startTime
-        console.log(`Completed in ${duration/1000}s.`)
-      }
-
-      // start backup loop
-      loop(dump, ONE_DAY_MS)
+      // process realtime events
+      realtimeBuffer
+        .map(handleEvent)
+        .flatMap(highland)
+        .map(dynamodb.insert)
+        .flatMap(highland)
+        .errors(err => {
+          console.error(err)
+          // process.exit(1)
+        })
+        .each(console.log)
     }
   )
 }
