@@ -6,25 +6,24 @@ const { Cache, Defaults } = require('../libs/stats')
 const highland = require('highland')
 const { loop, ONE_HOUR_MS, ONE_DAY_MS } = require('../libs/utils')
 
-function resume (old, new) {
+async function resume (OLD_DB, NEW_DB) {
   // buffer changes
   const realtimeBuffer = highland()
 
   // force all events into the buffer
-  old.events
+  OLD_DB.events
     .changes()
     .map(row => row.new_val)
     .compact()
     .pipe(realtimeBuffer)
 
   // resume memory state.
-  await old.events
+  await OLD_DB.events
     .readStream()
     .filter(row => {
-      console.log(row.id)
       return row.item.price
     })
-    .map(new.upsert)
+    .map(NEW_DB.events.upsert)
     .flatMap(highland)
     .errors(err => {
       console.error(err)
@@ -35,9 +34,8 @@ function resume (old, new) {
 
   // process realtime events
   realtimeBuffer
-    .map(handleEvent)
     .flatMap(highland)
-    .map(new.upsert)
+    .map(NEW_DB.events.upsert)
     .flatMap(highland)
     .errors(err => {
       console.error(err)
