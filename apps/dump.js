@@ -6,49 +6,49 @@ const { Cache, Defaults } = require('../libs/stats')
 const highland = require('highland')
 const { loop, ONE_HOUR_MS, ONE_DAY_MS } = require('../libs/utils')
 
-module.exports = config => {
-  const dynamodb = require('../libs/dynamodb')(config.dynamodb)('vunbox.events')
+function resume (old, new) {
+  // buffer changes
+  const realtimeBuffer = highland()
 
-  return Database(config.rethink).then(
-    async ({ events, stats, users, items, cases, snapshots, backups }) => {
+  // force all events into the buffer
+  old.events
+    .changes()
+    .map(row => row.new_val)
+    .compact()
+    .pipe(realtimeBuffer)
 
-      // buffer changes
-      const realtimeBuffer = highland()
+  // resume memory state.
+  await old.events
+    .readStream()
+    .filter(row => {
+      console.log(row.id)
+      return row.item.price
+    })
+    .map(new.upsert)
+    .flatMap(highland)
+    .errors(err => {
+      console.error(err)
+      process.exit(1)
+    })
+    .last()
+    .toPromise(Promise)
 
-      // force all events into the buffer
-      events
-        .changes()
-        .map(row => row.new_val)
-        .compact()
-        .pipe(realtimeBuffer)
+  // process realtime events
+  realtimeBuffer
+    .map(handleEvent)
+    .flatMap(highland)
+    .map(new.upsert)
+    .flatMap(highland)
+    .errors(err => {
+      console.error(err)
+      // process.exit(1)
+    })
+    .each(console.log)
+} 
 
-      // resume memory state.
-      await events
-        .readStream()
-        .filter(row => {
-          console.log(row.id)
-          return row.item.price
-        })
-        .map(dynamodb.insert)
-        .flatMap(highland)
-        .errors(err => {
-          console.error(err)
-          process.exit(1)
-        })
-        .last()
-        .toPromise(Promise)
-
-      // process realtime events
-      realtimeBuffer
-        .map(handleEvent)
-        .flatMap(highland)
-        .map(dynamodb.insert)
-        .flatMap(highland)
-        .errors(err => {
-          console.error(err)
-          // process.exit(1)
-        })
-        .each(console.log)
-    }
-  )
+module.exports = async config => {
+  const OLD_DB = await Database(config.rethink)
+  const NEW_DB = await Database(config.rethinknew)
+  
+  return resume(OLD_DB, NEW_DB)
 }
