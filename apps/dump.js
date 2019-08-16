@@ -6,7 +6,7 @@ const { Cache, Defaults } = require('../libs/stats')
 const highland = require('highland')
 const { loop, ONE_HOUR_MS, ONE_DAY_MS } = require('../libs/utils')
 
-async function resume (OLD_DB, NEW_DB) {
+async function resume(OLD_DB, NEW_DB) {
   // buffer changes
   const realtimeBuffer = highland()
 
@@ -23,7 +23,16 @@ async function resume (OLD_DB, NEW_DB) {
     .filter(row => {
       return row.item.price
     })
-    .map(NEW_DB.events.upsert)
+    .map(async row => {
+      const q = NEW_DB.events.table().insert(row, {
+        durability: 'soft',
+        returnChanges: true,
+        conflict: 'replace',
+      })
+      const w = await NEW_DB.events.run(q)
+      console.log(w)
+      return w
+    })
     .flatMap(highland)
     .errors(err => {
       console.error(err)
@@ -35,18 +44,27 @@ async function resume (OLD_DB, NEW_DB) {
   // process realtime events
   realtimeBuffer
     .flatMap(highland)
-    .map(NEW_DB.events.upsert)
+    .map(async row => {
+      const q = NEW_DB.events.table().insert(row, {
+        durability: 'soft',
+        returnChanges: true,
+        conflict: 'replace',
+      })
+      const w = await NEW_DB.events.run(q)
+      console.log(w)
+      return w
+    })
     .flatMap(highland)
     .errors(err => {
       console.error(err)
       // process.exit(1)
     })
     .each(console.log)
-} 
+}
 
 module.exports = async config => {
   const OLD_DB = await Database(config.rethink)
   const NEW_DB = await Database(config.rethinknew)
-  
+
   return resume(OLD_DB, NEW_DB)
 }
