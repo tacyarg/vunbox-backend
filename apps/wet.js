@@ -7,7 +7,7 @@ module.exports = async config => {
   return Database(config.rethink).then(({ cases }) => {
     const api = ExpressTrade({
       //NOTE: not required to fetch case list...
-      // key: '', 
+      // key: '',
     })
 
     async function updateCases() {
@@ -18,5 +18,11 @@ module.exports = async config => {
 
     // get cases
     loop(updateCases, 5 * ONE_MINUTE_MS)
+
+    return {
+      updateCases,
+      getCase: cases.get,
+      listCases: cases.list
+    }
   })
 }

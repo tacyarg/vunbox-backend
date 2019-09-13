@@ -5,22 +5,35 @@ const highland = require('highland')
 const Decrypt = require('../libs/decrypt')
 
 module.exports = config => {
-  return Database(config.rethink).then(async ({ events }) => {
+  return Database(config.rethink).then(({ events }) => {
     const socket = Socket('https://realtimefeed-api.wax.io')
+
+    // save a copy of the event in memeory
+    const recentEvents = []
+
+    function updateRecentEvents(event) {
+      if (!event) return
+      recentEvents.push(event)
+      if (recentEvents.length > 100) recentEvents.pop()
+      return recentEvents
+    }
+
+    const CreateEvent = (type, event) => {
+      return {
+        type,
+        ...event,
+        created: Date.now(),
+        updated: Date.now(),
+      }
+    }
 
     // process stream...
     highland('case-opened', socket)
       .map(event => {
-        return {
-          type: 'case-opened',
-          ...event,
-          created: Date.now(),
-          updated: Date.now(),
-        }
+        updateRecentEvents(event)
+        return CreateEvent('case-opened', event)
       })
-      .filter(row => {
-        return row.item.price
-      })
+      .filter(row => row.item.price)
       .map(events.upsert)
       .flatMap(highland)
       .errors(console.error)
@@ -32,20 +45,24 @@ module.exports = config => {
       .map(event => {
         const value = Decrypt(event)
         event = JSON.parse(value)
-        return {
-          type: 'trade-offers',
-          ...event,
-          created: Date.now(),
-          updated: Date.now(),
-        }
+
+        updateRecentEvents(event)
+        return CreateEvent('trade-offers', event)
       })
-      .filter(row => {
-        return row.item.price
-      })
+      .filter(row => row.item.price)
       .map(events.upsert)
       .flatMap(highland)
       .errors(console.error)
       .doto(console.log)
       .resume()
+
+    return {
+      recentEvents() {
+        return recentEvents
+      },
+      openStream(topic) {
+        return highland(topic, socket)
+      },
+    }
   })
 }

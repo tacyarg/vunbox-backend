@@ -3,14 +3,14 @@ const highland = require('highland')
 const Leaderboards = require('../libs/leaderboards').Cache
 
 module.exports = config => {
-  return Database(config.rethink).then(
-    async ({ events, stats, users, leaderboards }) => {
+  return Database(config.rethink)
+    .then(async ({ events, stats, users, leaderboards }) => {
       const leaderboardCache = Leaderboards()
 
       await leaderboards
         .readStream()
         .map(leaderboardCache.set)
-        .batch(100)
+        .batch(500)
         .last()
         .toPromise(Promise)
 
@@ -50,6 +50,9 @@ module.exports = config => {
           process.exit(1)
         })
         .resume()
-    }
-  )
+
+      return {
+        ...leaderboardCache,
+      }
+    })
 }

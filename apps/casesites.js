@@ -33,24 +33,17 @@ module.exports = config => {
         .changes()
         .map(row => row.new_val)
         .compact()
-        .filter(row => {
-          return row.type === 'case-opened'
-        })
-        .filter(row => {
-          return row.item.price
-        })
+        .filter(row => row.type === 'case-opened')
+        .filter(row => row.item.price)
         .pipe(realtimeBuffer)
 
       // resume memory state.
       await events
         .readStream()
-        .filter(row => {
-          return row.type === 'case-opened'
-        })
-        .filter(row => {
-          return row.item.price
-        })
+        .filter(row => row.type === 'case-opened')
+        .filter(row => row.item.price)
         .map(handleEvent)
+        .batch(500)
         .flatMap(highland)
         .errors(err => {
           console.error(err)
