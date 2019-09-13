@@ -21,8 +21,8 @@ module.exports = async config => {
 
     return {
       updateCases,
-      getCase: cases.get,
-      listCases: cases.list
+      getCase: async id => cases.get(id),
+      listCases: async () => cases.list()
     }
   })
 }

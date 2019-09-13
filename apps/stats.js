@@ -129,10 +129,12 @@ module.exports = config => {
         .each(console.log)
 
       return {
-        openStream() {
+        async openStream() {
           return realtimeBuffer.toPromise(Promise)
         },
-        ...statsCache
+        async list(){
+          return statsCache.list()
+        },
       }
     }
   )

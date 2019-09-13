@@ -2,10 +2,10 @@ require('dotenv').config()
 
 module.exports = async config => {
   return {
-    ping() {
+    async ping() {
       return 'pong'
     },
-    echo(params) {
+    async echo(params) {
       return params
     }
   }
