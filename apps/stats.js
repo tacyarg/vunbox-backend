@@ -5,10 +5,13 @@ const { Cache, Defaults } = require('../libs/stats')
 module.exports = config => {
   return Database(config.rethink).then(
     async ({ events, stats, users, items, cases }) => {
+
+      let totalEvents = 0
       const statsCache = Cache(Defaults.user)
       const boxes = {}
 
       async function handleEvent(event) {
+        console.log("handleEvent:", ++totalEvents, event.id)
         switch (event.type) {
           case 'case-opened':
           // simple cache to optimize processing speed...
@@ -79,10 +82,9 @@ module.exports = config => {
       // resume memory state.
       await events
         .readStream()
-        .filter(row => {
-          return row.item.price
-        })
+        .filter(row => row.item.price)
         .map(handleEvent)
+        .batch(500)
         .flatMap(highland)
         .errors(err => {
           console.error(err)

@@ -7,6 +7,9 @@ const highland = require('highland')
 const { loop, ONE_HOUR_MS, ONE_DAY_MS } = require('../libs/utils')
 
 async function resume(OLD_DB, NEW_DB) {
+
+  let count = 0
+
   // buffer changes
   const realtimeBuffer = highland()
 
@@ -25,14 +28,16 @@ async function resume(OLD_DB, NEW_DB) {
     })
     .map(async row => {
       const q = NEW_DB.events.table().insert(row, {
-        durability: 'soft',
         returnChanges: true,
         conflict: 'replace',
+        durability: 'soft',
       })
-      const w = await NEW_DB.events.run(q)
-      console.log(w)
+      const w = await q.run(NEW_DB.events.con)
+      count += 1
+      console.log(count, row.id)
       return w
     })
+    .batch(500)
     .flatMap(highland)
     .errors(err => {
       console.error(err)
@@ -43,15 +48,15 @@ async function resume(OLD_DB, NEW_DB) {
 
   // process realtime events
   realtimeBuffer
-    .flatMap(highland)
     .map(async row => {
       const q = NEW_DB.events.table().insert(row, {
-        durability: 'soft',
         returnChanges: true,
         conflict: 'replace',
+        durability: 'soft',
       })
-      const w = await NEW_DB.events.run(q)
-      console.log(w)
+      const w = await q.run(NEW_DB.events.con)
+      count += 1
+      console.log(count, row.id)
       return w
     })
     .flatMap(highland)
