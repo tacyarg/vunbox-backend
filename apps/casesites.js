@@ -21,7 +21,10 @@ module.exports = config => {
         return [
           caseStats.processCaseEvent(event.caseOpeningSite, event),
           caseStats.processCaseSiteStats(event.caseOpeningSite, event),
-          caseStats.processAdditionalCaseSiteStats(event.caseOpeningSite, event)
+          caseStats.processAdditionalCaseSiteStats(
+            event.caseOpeningSite,
+            event
+          ),
         ]
       }
 
@@ -75,6 +78,13 @@ module.exports = config => {
           // process.exit(1)
         })
         .each(console.log)
+
+      return {
+        openStream() {
+          return realtimeBuffer.toPromise(Promise)
+        },
+        ...caseStats,
+      }
     }
   )
 }

@@ -158,6 +158,11 @@ module.exports = config => {
           // process.exit(1)
         })
         .each(console.log)
+
+      return {
+        ...snapshots,
+        listFiles: bucket.listFiles()
+      }
     }
   )
 }

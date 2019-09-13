@@ -81,6 +81,13 @@ module.exports = config => {
           // process.exit(1)
         })
         .each(console.log)
+
+      return {
+        openStream() {
+          return realtimeBuffer.toPromise(Promise)
+        },
+        ...caseStats,
+      }
     }
   )
 }
