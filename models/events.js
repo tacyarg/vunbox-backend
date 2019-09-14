@@ -15,11 +15,11 @@ module.exports = async con => {
       return table.streamify(query)
     },
     streamSorted() {
-      const query = table.table().orderBy({index: 'created'})
+      const query = table.table().orderBy({ index: 'created' })
       return table.streamify(query)
     },
-    streamFrom(index, key = 'created') {
-      const query = table.table().between(key, r.maxval, {index})
+    streamFrom(from, index = 'created') {
+      const query = table.table().between(from, table.r.maxval, { index })
       return table.streamify(query)
     },
     listTopSites() {

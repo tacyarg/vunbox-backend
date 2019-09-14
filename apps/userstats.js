@@ -114,7 +114,6 @@ module.exports = async config => {
       console.error(err)
       process.exit(1)
     })
-    .last()
     .toPromise(Promise)
 
   // dump cache to db
