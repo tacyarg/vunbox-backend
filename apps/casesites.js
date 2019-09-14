@@ -5,8 +5,8 @@ const { Cache, Defaults } = require('../libs/stats')
 // process all stats for each site.
 
 module.exports = async config => {
-  const { events, stats, cases } = await Database(config.rethink)
-    const caseStats = Cache(Defaults.caseSite)
+  const { events, casesites, cases } = await Database(config.rethink)
+    const statsCache = Cache(Defaults.caseSite)
 
       const boxes = {}
       let totalEvents = 0
@@ -23,9 +23,9 @@ module.exports = async config => {
         }
 
         return [
-          caseStats.processCaseEvent(event.caseOpeningSite, event),
-          caseStats.processCaseSiteStats(event.caseOpeningSite, event),
-          caseStats.processAdditionalCaseSiteStats(
+          statsCache.processCaseEvent(event.caseOpeningSite, event),
+          statsCache.processCaseSiteStats(event.caseOpeningSite, event),
+          statsCache.processAdditionalCaseSiteStats(
             event.caseOpeningSite,
             event
           ),
@@ -46,7 +46,7 @@ module.exports = async config => {
 
       // resume memory state.
       await events
-        .readStream()
+        .streamSorted()
         .filter(row => row.type === 'case-opened')
         .filter(row => row.item.price)
         .map(handleEvent)
@@ -60,9 +60,9 @@ module.exports = async config => {
         .toPromise(Promise)
 
       // dump to db
-      await caseStats
+      await statsCache
         .highland()
-        .map(stats.upsert)
+        .map(casesites.upsert)
         .flatMap(highland)
         .errors(err => {
           console.error(err)
@@ -75,19 +75,19 @@ module.exports = async config => {
       realtimeBuffer
         .map(handleEvent)
         .flatMap(highland)
-        .map(stats.upsert)
+        .map(casesites.upsert)
         .flatMap(highland)
         .errors(err => {
           console.error(err)
           // process.exit(1)
         })
-        .each(console.log)
+        .resume()
 
       return {
         openStream() {
           return realtimeBuffer.toPromise(Promise)
         },
-        ...caseStats,
+        ...statsCache,
       }
   )
 }

@@ -5,8 +5,8 @@ const { Cache, Defaults } = require('../libs/stats')
 // process all stats for each case.
 
 module.exports = async config => {
-  const { events, stats, items, cases } = await Database(config.rethink)
-  const caseStats = Cache(Defaults.case)
+  const { events, casestats, items, cases } = await Database(config.rethink)
+  const statsCache = Cache(Defaults.case)
 
   const boxes = {}
   let totalEvents = 0
@@ -30,8 +30,8 @@ module.exports = async config => {
       image: event.item.image,
     })
     return [
-      caseStats.processCaseEvent(event.caseId, event),
-      caseStats.processAdditionalCaseStats(event.caseId, event),
+      statsCache.processCaseEvent(event.caseId, event),
+      statsCache.processAdditionalCaseStats(event.caseId, event),
     ]
   }
 
@@ -49,7 +49,7 @@ module.exports = async config => {
 
   // resume memory state.
   await events
-    .readStream()
+    .streamSorted()
     .filter(row => row.type === 'case-opened')
     .filter(row => row.item.price)
     .map(handleEvent)
@@ -63,9 +63,9 @@ module.exports = async config => {
     .toPromise(Promise)
 
   // dump to db
-  await caseStats
+  await statsCache
     .highland()
-    .map(stats.upsert)
+    .map(casestats.upsert)
     .flatMap(highland)
     .errors(err => {
       console.error(err)
@@ -78,18 +78,18 @@ module.exports = async config => {
   realtimeBuffer
     .map(handleEvent)
     .flatMap(highland)
-    .map(stats.upsert)
+    .map(casestats.upsert)
     .flatMap(highland)
     .errors(err => {
       console.error(err)
       // process.exit(1)
     })
-    .each(console.log)
+    .resume()
 
   return {
     openStream() {
       return realtimeBuffer.toPromise(Promise)
     },
-    ...caseStats,
+    ...statsCache,
   }
 }

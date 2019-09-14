@@ -3,7 +3,9 @@ const { Init } = require('rethink-table')
 module.exports = config => {
   return Init.advanced(config, [
     require('./events'),
-    require('./stats'),
+    require('./userstats'),
+    require('./casestats'),
+    require('./casesites'),
     require('./users'),
     require('./leaderboards'),
     require('./items'),

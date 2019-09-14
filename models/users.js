@@ -4,7 +4,7 @@ const assert = require('assert')
 module.exports = async con => {
   const schema = {
     table: 'users',
-    indices: ['username'],
+    indices: ['username', 'created', 'updated'],
   }
 
   const table = await Table(con, schema)
@@ -20,6 +20,14 @@ module.exports = async con => {
 
   return {
     ...table,
+    changes() {
+      const query = table.table().changes()
+      return table.streamify(query)
+    },
+    streamSorted() {
+      const query = table.table().orderBy({ index: 'created' })
+      return table.streamify(query)
+    },
     async save(userid, data = {}) {
       assert(userid, 'userid required')
 

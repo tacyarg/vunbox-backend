@@ -3,7 +3,7 @@ const { Table } = require('rethink-table')
 module.exports = async con => {
   const schema = {
     table: 'events',
-    indices: ['created', 'type'],
+    indices: ['created', 'updated', 'type'],
   }
 
   const table = await Table(con, schema)
@@ -16,6 +16,10 @@ module.exports = async con => {
     },
     streamSorted() {
       const query = table.table().orderBy({index: 'created'})
+      return table.streamify(query)
+    },
+    streamFrom(index, key = 'created') {
+      const query = table.table().between(key, r.maxval, {index})
       return table.streamify(query)
     },
     listTopSites() {

@@ -2,10 +2,10 @@ const Database = require('../models')
 const highland = require('highland')
 const Leaderboards = require('../libs/leaderboards').Cache
 
-// for all new stats changes, create leaderboards.
+// for all new userstats changes, create leaderboards.
 
 module.exports = async config => {
-  const { stats, leaderboards } = await Database(config.rethink)
+  const { userstats, leaderboards } = await Database(config.rethink)
   const leaderboardCache = Leaderboards()
   let totalEvents = 0
 
@@ -44,7 +44,6 @@ module.exports = async config => {
   // // process all existings stats.
   // await stats
   //   .readStream()
-  //   .filter(r => r.id !== 'global')
   //   .map(stats => {
   //     console.log('processLeaderboards:', ++totalEvents, stats.id)
   //     return processLeaderboards(stats)
@@ -59,11 +58,10 @@ module.exports = async config => {
   //   .toPromise(Promise)
   
   // watch for changes in realtime.
-  stats
+  userstats
     .changes()
     .map(r => r.new_val)
     .compact()
-    .filter(r => r.id !== 'global')
     .map(stats => {
       console.log('processLeaderboards:', ++totalEvents, stats.id)
       return processLeaderboards(stats)
@@ -74,7 +72,7 @@ module.exports = async config => {
       console.error('Error Consuming Stats:', err)
       process.exit(1)
     })
-    .each(console.log)
+    .resume()
 
   return {
     ...leaderboardCache,
