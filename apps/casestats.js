@@ -8,8 +8,11 @@ module.exports = config => {
       const caseStats = Cache(Defaults.case)
 
       const boxes = {}
+      let totalEvents = 0
 
       async function handleEvent(event) {
+        console.log('handleEvent:', ++totalEvents, event.id)
+
         // simple cache to optimize processing speed...
         if (!boxes[event.caseId]) {
           event.box = await cases.get(event.caseId)
