@@ -56,15 +56,17 @@ module.exports = config => {
     update,
     getOrCreate,
     list,
-    processLeaderboard(name, event, orderParams) {
-      // assert(orderParams, 'orderParams required to sort leaderboard')
+    processLeaderboard(name, event, sort) {
+      assert(name, 'name required.')
+      assert(event, 'event required.')
       let { data, limit } = getOrCreate(name)
+      
       // push new value
       // sort array
       // slice with limit
       if (event[name]) {
         data.push(event)
-        data = lodash.orderBy(data, orderParams || name, ['desc'])
+        data = lodash.orderBy(data, sort || name, ['desc'])
         data = lodash.slice(data, 0, limit)
         return update(name, { data })
       }

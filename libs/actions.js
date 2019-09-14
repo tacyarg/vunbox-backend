@@ -102,13 +102,19 @@ module.exports = ({
   }
 
   return {
-    listUserStats() {
+    async listLeaderboards() {
+      return leaderboards.list()
+    },
+    async getLeaderboard(id) {
+      return leaderboards.get(id)
+    },
+    async listUserStats() {
       return stats.listType('user')
     },
-    listCaseSiteStats() {
+    async listCaseSiteStats() {
       return stats.listType('casesite')
     },
-    listCaseStats() {
+    async listCaseStats() {
       return stats.listType('case')
     },
     async listSiteMostOpenings() {
@@ -180,10 +186,10 @@ module.exports = ({
       let list = await listTopStats('user', 'caseTotalAwarded')
       return filterProps(list, ['username', 'caseTotalAwarded'])
     },
-    listDailySnapshots() {
+    async listDailySnapshots() {
       return snapshots.listRecent()
     },
-    listDailyBackups() {
+    async listDailyBackups() {
       return backups.listRecent()
     },
   }
