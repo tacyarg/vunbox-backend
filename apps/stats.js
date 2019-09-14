@@ -36,8 +36,8 @@ module.exports = async config => {
     return [
       statsCache.processCaseEvent(event.userId, event),
       statsCache.processAdditionalCaseStats(event.userId, event),
-      statsCache.processCaseEvent('global', event),
-      statsCache.processAdditionalCaseStats('global', event),
+      // statsCache.processCaseEvent('global', event),
+      // statsCache.processAdditionalCaseStats('global', event),
     ]
   }
 
@@ -66,7 +66,8 @@ module.exports = async config => {
     }
 
     // flush writes into the stream.
-    return [...results, statsCache.processTradeEvent('global', event)]
+    // return [...results, statsCache.processTradeEvent('global', event)]
+    return [...results]
   }
 
   // route the event type to the correct topic processor.
