@@ -4,6 +4,8 @@ const Database = require('../models')
 const highland = require('highland')
 const Decrypt = require('../libs/decrypt')
 
+// listen and formalize new events, save them to a table for later consumption.
+
 module.exports = async config => {
   const { events } = await Database(config.rethink)
   const socket = Socket('https://realtimefeed-api.wax.io')

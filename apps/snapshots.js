@@ -6,6 +6,8 @@ const { Cache, Defaults } = require('../libs/stats')
 const highland = require('highland')
 const { loop, ONE_HOUR_MS } = require('../libs/utils')
 
+// create and post daily snapshots of processed data.
+
 module.exports = config => {
   return Database(config.rethink).then(
     async ({ events, stats, users, items, cases, snapshots, backups }) => {

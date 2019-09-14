@@ -2,6 +2,8 @@ const Database = require('../models')
 const highland = require('highland')
 const Leaderboards = require('../libs/leaderboards').Cache
 
+// for all new stats changes, create leaderboards.
+
 module.exports = async config => {
   const { stats, leaderboards } = await Database(config.rethink)
   const leaderboardCache = Leaderboards()

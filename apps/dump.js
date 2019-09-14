@@ -6,6 +6,8 @@ const { Cache, Defaults } = require('../libs/stats')
 const highland = require('highland')
 const { loop, ONE_HOUR_MS, ONE_DAY_MS } = require('../libs/utils')
 
+// dump all events to a new database.
+
 async function resume(OLD_DB, NEW_DB) {
 
   let count = 0

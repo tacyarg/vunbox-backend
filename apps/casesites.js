@@ -2,10 +2,11 @@ const Database = require('../models')
 const highland = require('highland')
 const { Cache, Defaults } = require('../libs/stats')
 
-module.exports = config => {
-  return Database(config.rethink).then(
-    async ({ events, stats, users, leaderboards, items, cases }) => {
-      const caseStats = Cache(Defaults.caseSite)
+// process all stats for each site.
+
+module.exports = async config => {
+  const { events, stats, cases } = await Database(config.rethink)
+    const caseStats = Cache(Defaults.caseSite)
 
       const boxes = {}
       let totalEvents = 0
@@ -88,6 +89,5 @@ module.exports = config => {
         },
         ...caseStats,
       }
-    }
   )
 }

@@ -2,6 +2,8 @@ const Database = require('../models')
 const highland = require('highland')
 const { Cache, Defaults } = require('../libs/stats')
 
+// process events creating stats by userid.
+
 module.exports = async config => {
   const { events, stats, users, items, cases } = await Database(config.rethink)
 
