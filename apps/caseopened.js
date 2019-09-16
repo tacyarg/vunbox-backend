@@ -32,8 +32,8 @@ module.exports = async config => {
     stats.spent += box.price
     stats.awarded += item.price
     stats.profit = stats.awarded - stats.spent
-    stats.boxName = box.name
-    stats.boxId = box.id
+    // stats.boxName = box.name
+    // stats.boxId = box.id
 
     cache.set(id, stats)
 
