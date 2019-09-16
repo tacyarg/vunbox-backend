@@ -52,6 +52,7 @@ module.exports = async ({ handle, events, table, cache }) => {
   realtimeBuffer
     .map(handle)
     .flatMap(highland)
+    .compact()
     .map(table.upsert)
     .flatMap(highland)
     .errors(console.error)

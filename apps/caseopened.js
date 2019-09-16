@@ -4,12 +4,13 @@ const assert = require('assert')
 
 module.exports = async config => {
   const { events, cases, caseopened } = await Database(config.rethink)
+  const boxes = {}
   const cache = new Map()
   let eventCount = 0
 
   const Defaults = (id, o) => {
     return {
-      id,
+      id, // the context on which the data is based.
       type: 'caseopened',
       created: Date.now(),
       updated: Date.now(),
@@ -31,6 +32,8 @@ module.exports = async config => {
     stats.spent += box.price
     stats.awarded += item.price
     stats.profit = stats.awarded - stats.spent
+    stats.boxName = box.name
+    stats.boxId = box.id
 
     cache.set(id, stats)
 
@@ -41,15 +44,19 @@ module.exports = async config => {
     console.log('event', ++eventCount, e.id)
     if (e.type !== 'case-opened') return
 
-    e.box = await cases.get(e.caseId)
+    if (boxes[e.caseId]) {
+      e.box = boxes[e.caseId]
+    } else {
+      e.box = await cases.get(e.caseId)
+      boxes[e.caseId] = e.box
+    }
 
     return [
       updateStats(e.item.name, e),
-      updateStats(e.caseName, e),
       updateStats(e.caseOpeningSite, e),
       updateStats(e.item.genesisId, e),
-      updateStats(e.userName, e),
       updateStats(e.userId, e),
+      updateStats(e.caseName, e),
     ]
   }
 
