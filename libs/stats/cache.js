@@ -206,33 +206,34 @@ module.exports = Defaults => {
       if (item.price > 0) methods.increment('tradesTotalValue', item.price)
 
       if (id !== 'global') {
-        if (id == event.sender.userId) {
-          methods.increment('outgoingTradesCount')
-          if (item.price > 0)
-            methods.increment('outgoingTradesTotal', item.price)
-        } else {
-          methods.increment('incomingTradesCount')
-          if (item.price > 0)
-            methods.increment('incomingTradesTotal', item.price)
-        }
+        // if (id === event.sender.userId) {
+        //   methods.increment('outgoingTradesCount')
+        //   if (item.price > 0)
+        //     methods.increment('outgoingTradesTotal', item.price)
+        // } else if (id === event.recipient.userId) {
+        //   methods.increment('incomingTradesCount')
+        //   if (item.price > 0)
+        //     methods.increment('incomingTradesTotal', item.price)
+        // }
 
-        methods.setProp(
-          'tradesProfit',
-          stats.incomingTradesTotal - stats.outgoingTradesTotal
-        )
+        // methods.setProp(
+        //   'tradesProfit',
+        //   stats.incomingTradesTotal - stats.outgoingTradesTotal
+        // )
       }
 
-      if (!stats.bestItemTraded) {
-        methods.setBestItem('bestItemTraded', item)
-      } else if (item.price > stats.bestItemTraded.price) {
-        methods.setBestItem('bestItemTraded', item)
-      }
+      // maybe useful if userid's existed.
+      // if (!stats.bestItemTraded) {
+      //   methods.setBestItem('bestItemTraded', item)
+      // } else if (item.price > stats.bestItemTraded.price) {
+      //   methods.setBestItem('bestItemTraded', item)
+      // }
 
-      if (!stats.worstItemTraded) {
-        methods.setBestItem('worstItemTraded', item)
-      } else if (item.price < stats.worstItemTraded.price) {
-        methods.setBestItem('worstItemTraded', item)
-      }
+      // if (!stats.worstItemTraded) {
+      //   methods.setBestItem('worstItemTraded', item)
+      // } else if (item.price < stats.worstItemTraded.price) {
+      //   methods.setBestItem('worstItemTraded', item)
+      // }
 
       return set(stats)
     },

@@ -23,6 +23,7 @@
     "start": "node index.js --max_old_space_size=4096",
     "test": "name=test yarn start",
     "feed": "name=feed yarn start",
+    "tradeoffers": "name=tradeoffers yarn start",
     "userstats": "name=userstats yarn start",
     "casestats": "name=casestats yarn start",
     "api": "name=api yarn start",

@@ -11,6 +11,7 @@ module.exports = config => {
     require('./items'),
     require('./cases'),
     require('./snapshots'),
-    require('./backups')
+    require('./backups'),
+    require('./tradeoffers')
   ])
 }
