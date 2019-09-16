@@ -18,8 +18,12 @@ module.exports = async config => {
   }
 
   const cache = new Map()
-  
-  const handle = async ({ item }) => {
+
+  let eventCount = 0
+  const handle = async ({ type, id, item }) => {
+    console.log("event", ++eventCount, id)
+    if(type !== 'trade-offers') return 
+
     let stats = cache.get(item.name)
     stats = Defaults(item.name, stats)
 

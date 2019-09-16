@@ -27,7 +27,6 @@ module.exports = async ({ handle, events, table, cache }) => {
   // process all events from last mutation to now.
   await events
     .streamFrom(last ? last.updated : 0)
-    // .filter(row => row.item.price)
     .map(handle)
     .flatMap(highland)
     .errors(err => {
@@ -46,7 +45,7 @@ module.exports = async ({ handle, events, table, cache }) => {
       console.error(err)
       process.exit(1)
     })
-    .done(r => console.log("Done saving the cache!"))
+    .done(r => console.log('Done saving the cache!'))
 
   console.log('Stream realtime!')
   // process realtime events forever.

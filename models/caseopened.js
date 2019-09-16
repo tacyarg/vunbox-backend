@@ -2,7 +2,7 @@ const { Table } = require('rethink-table')
 
 module.exports = async con => {
   const schema = {
-    table: 'tradeoffers',
+    table: 'caseopened',
     indices: ['created', 'updated', 'type', 'count'],
   }
 

@@ -12,6 +12,7 @@ module.exports = config => {
     require('./cases'),
     require('./snapshots'),
     require('./backups'),
-    require('./tradeoffers')
+    require('./tradeoffers'),
+    require('./caseopened')
   ])
 }
