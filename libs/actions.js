@@ -100,6 +100,13 @@ module.exports = libs => {
     async listLibs() {
       return Object.keys(libs)
     },
+    async callLib(lib, action, params) {
+      const library = libs[lib]
+      assert(library, 'library does not exist.')
+      assert(library[action], 'library action not exist.')
+
+      return libs[lib][action](params)
+    },
     async listTableContents(table) {
       assert(libs[table], 'table does not exist.')
       return libs[table].list()
