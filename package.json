@@ -12,7 +12,7 @@
     "highland": "^2.13.1",
     "lodash": "^4.17.13",
     "memtable": "^2.0.0-alpha.12",
-    "moment": "^2.24.0",
+    "moment": "^2.29.2",
     "rethink-table": "^0.0.5",
     "socket.io-client": "^2.2.0",
     "uWebSockets.js": "uNetworking/uWebSockets.js#v15.4.0",
